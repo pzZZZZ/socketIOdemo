@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.bootcss.com/socket.io/2.0.3/socket.io.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        body {
+            background: lightblue;
+        }
+
+        .box {
+            width: 500px;
+            height: 300px;
+            overflow-y: scroll;
+            margin: 0 auto;
+            background: #fff;
+        }
+
+        .input {
+            background: lightcoral;
+            width: 200px;
+            margin: 0 auto;
+            display: flex;
+
+        }
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="box">
+        <ul>
+
+        </ul>
+    </div>
+    <div class="input">
+        <input type="text" class="value" autofocus="autofocus">
+        <input type="button" value="发送" class="btn">
+    </div>
+    <script>
+        var socket = io();
+        class Client {
+            constructor() {
+                this.msg = {}
+                this.userMSG()
+                this.Login()
+                this.SystemMSG()
+                this.sendMSG()
+                this.accMsg()
+            }
+            userMSG() {
+                let name = prompt('请输入您的姓名');
+                this.msg.name = name;
+            }
+            Login() {
+                const _this = this;
+                socket.emit('event', { 'name': _this.msg.name });
+            }
+            SystemMSG() {
+                socket.on('system', function (data) {
+                    console.log(data)
+                    $('.box ul').append(`<li>${data}</li>`)
+                    let trueH = $('.box ul').height();
+                    $('.box').scrollTop(trueH)
+                })
+            }
+            sendMSG() {
+                const _this = this;
+                $(document).on('keyup', function (event) {
+                    if (event.keyCode == 13) {
+                        let val = $('.value').val();
+                        socket.emit('Csend', { 'name': _this.msg.name, "msg": val })
+                        $('.value').val('');
+                        let trueH = $('.box ul').height();
+                        $('.box').scrollTop(trueH)
+                    }
+                });
+                $('.btn').on('click', function () {
+                    let val = $('.value').val();
+                    socket.emit('Csend', { 'name': _this.msg.name, "msg": val })
+                    $('.value').val('');
+                    let trueH = $('.box ul').height();
+                    $('.box').scrollTop(trueH)
+                })
+
+            }
+            accMsg() {
+                const _this = this;
+                socket.on('Ssend', function (data) {
+                    console.log(data)
+                    $('.box ul').append(`<li><b>${data.name}说:</b>${data.msg}</li>`)
+                    let trueH = $('.box ul').height();
+                    $('.box').scrollTop(trueH)
+                })
+            }
+        }
+        new Client()
+
+
+            // function a() {
+            //     socket.emit('event');
+
+            // }
+
+            //监听click2事件  
+            // socket.on('click2', function (data) {
+            //     var htmldatas = data.datas;
+            //     var html = '';
+            //     for (var i = 0; i < htmldatas.length; i++) {
+            //         var htmldata = htmldatas[i];
+            //         html += '<li>' + htmldata + '</li>';
+            //     }
+            //     document.getElementById('ultext').innerHTML = html;
+            // })  
+    </script>
+</body>
+
+
+</html>
