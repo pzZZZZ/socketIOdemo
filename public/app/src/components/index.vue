@@ -6,21 +6,45 @@
       <div class="right">
         <v-chat></v-chat>
       </div>
+     <Modal
+        v-model="modal1"
+        title="输入名字开始聊hi吧"
+        @on-ok="ok"
+        cancel-text=""
+        :closable="false"
+        :mask-closable="false">
+        <i-input v-model="value" placeholder="请输入您的名字" style="width: 450px"></i-input>
+    </Modal>
   </div>
 </template>
 
 <script>
 import vLeft from "../components/list";
 import vChat from "../components/chat";
+import Vue from "vue";
+import { Modal,Input } from "iview";
+Vue.component("Modal", Modal);
+Vue.component("iInput", Input);
 export default {
   name: "HelloWorld",
+  created() {},
+  methods: {
+    ok() {
+      console.log(this.value);
+    },
+    cancel() {
+      console.log("cancle");
+    }
+  },
   components: {
     vLeft,
     vChat
   },
   data() {
     return {
-      msg: "Welcome to Your Vue.js App"
+      msg: "Welcome to Your Vue.js App",
+      modal1: true,
+      value: ""
     };
   }
 };
@@ -29,7 +53,7 @@ export default {
 <style lang="scss" scoped>
 .index {
   width: 800px;
-  height: 600px;
+  height: 800px;
   background: #ffcc99;
   margin: 0 auto;
   margin-top: 100px;
@@ -42,9 +66,8 @@ export default {
     // background: #ffcccc;
   }
   .right {
-    flex:1;
+    flex: 1;
     height: 100%;
-    
   }
 }
 </style>
