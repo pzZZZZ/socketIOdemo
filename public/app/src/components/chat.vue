@@ -23,6 +23,15 @@
       
        <Button @click="Csend" >发送</Button>
     </div>
+    <Modal
+        v-model="modal1"
+        title="输入名字开始聊hi吧"
+        @on-ok="ok"
+        cancel-text=""
+        :closable="false"
+        :mask-closable="false">
+        <i-input v-model="value" placeholder="请输入您的名字" style="width: 450px"></i-input>
+    </Modal>
   </div>
 </template>
 <script>
@@ -33,12 +42,15 @@ import { Button } from "iview";
 Vue.component("Button", Button);
 import VueSocketio from "vue-socket.io";
 Vue.use(VueSocketio, "http://45.32.181.136:3000");
+// Vue.use(VueSocketio, "http://localhost:3000");
 Vue.use(VueQuillEditor);
 export default {
   components: {},
   data() {
     return {
+      modal1: true,
       chat: [],
+      value:'',
       content: "",
       editorOption: {
         // some quill options
@@ -46,22 +58,14 @@ export default {
     };
   },
   mounted() {
-    this.name = localStorage.getItem("name");
-    const wrapper = document.querySelector(".wrapper");
-    this.scroll = new Bscroll(wrapper, {
-      scrollbar: true
-    });
+    if (localStorage.getItem("name")) {
+      this.modal1 = false;
+      this.init();
+      
+    }else{
 
-    this.scroll.on("refresh", () => {
-      this.scroll.scrollTo(0, this.scroll.maxScrollY, "swing");
-    });
-    // this.scroll.on("scroll", () => {
-    //   console.log(123);
-    // });
-
-    this.socketarea();
-    this.Cacc();
-    this.isonline();
+    }
+    
   },
   sockets: {
     // connect: function() {
@@ -79,6 +83,29 @@ export default {
     }
   },
   methods: {
+    ok() {
+      console.log(this.value);
+      localStorage.setItem("name", this.value);
+      this.init();
+    },
+    init() {
+      this.name = localStorage.getItem("name");
+      const wrapper = document.querySelector(".wrapper");
+      this.scroll = new Bscroll(wrapper, {
+        scrollbar: true
+      });
+
+      this.scroll.on("refresh", () => {
+        this.scroll.scrollTo(0, this.scroll.maxScrollY, "swing");
+      });
+      // this.scroll.on("scroll", () => {
+      //   console.log(123);
+      // });
+
+      this.socketarea();
+      this.Cacc();
+      this.isonline();
+    },
     onEditorBlur(editor) {
       console.log("editor blur!", editor);
     },
@@ -158,7 +185,7 @@ export default {
   background: #fff;
 }
 .ql-container {
-  height: 150px;
+  height: 150px!important;
   overflow-y: scroll;
 }
 .chat {

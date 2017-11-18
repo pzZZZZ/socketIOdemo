@@ -6,7 +6,7 @@
       <div class="right">
         <v-chat ></v-chat>
       </div>
-     <Modal
+     <!-- <Modal
         v-model="modal1"
         title="输入名字开始聊hi吧"
         @on-ok="ok"
@@ -14,7 +14,7 @@
         :closable="false"
         :mask-closable="false">
         <i-input v-model="value" placeholder="请输入您的名字" style="width: 450px"></i-input>
-    </Modal>
+    </Modal> -->
   </div>
 </template>
 
@@ -29,18 +29,18 @@ export default {
   name: "HelloWorld",
   created() {},
   mounted() {
-    if (localStorage.getItem("name")) {
-      this.modal1 = false;
-    }
+    // if (localStorage.getItem("name")) {
+    //   this.modal1 = false;
+    // }
   },
   methods: {
-    ok() {
-      console.log(this.value);
-      localStorage.setItem("name", this.value);
-    },
-    cancel() {
-      console.log("cancle");
-    }
+    // ok() {
+    //   console.log(this.value);
+    //   localStorage.setItem("name", this.value);
+    // },
+    // cancel() {
+    //   console.log("cancle");
+    // }
   },
   components: {
     vLeft,
