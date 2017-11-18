@@ -32,7 +32,7 @@ import VueQuillEditor from "vue-quill-editor";
 import { Button } from "iview";
 Vue.component("Button", Button);
 import VueSocketio from "vue-socket.io";
-Vue.use(VueSocketio, "http://localhost:3000");
+Vue.use(VueSocketio, "http://45.32.181.136:3000");
 Vue.use(VueQuillEditor);
 export default {
   components: {},
