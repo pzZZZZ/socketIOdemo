@@ -22,9 +22,19 @@
 </template>
 <script>
 export default {
+  props: {
+    list: {
+      type: Array,
+      // default: 0,
+      required: true,
+      // validator: function(value) {
+      //   return value >= 0;
+      // }
+    }
+  },
   data() {
     return {
-      list: ["张三", "李四", "张三", "李四", "张三", "李四", "张三", "李四"],
+      // list: ["张三", "李四", "张三", "李四", "张三", "李四", "张三", "李四"],
       index: 0,
       menuShow: true
     };
@@ -49,6 +59,8 @@ export default {
   cursor: pointer;
 }
 .chatList {
+  max-height: 400px;
+  overflow-y: scroll;
   ul {
     li {
       .item {
@@ -70,7 +82,6 @@ export default {
     }
   }
 }
-
 </style>
 
 

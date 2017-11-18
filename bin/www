@@ -24,18 +24,39 @@ var io = require('socket.io')(server);
 /**
  * Listen on provided port, on all network interfaces.
  */
+let userList = [];
 io.on('connection', function (client) {
-
+  
+  
   client.on('event', function (data) {
     console.log(`${data.name}已登录`);
     // client.emit('system',`欢迎${data.name}加入聊天室`)
-    io.sockets.emit("system", `欢迎${data.name}加入聊天室`);
+    
+    if(userList.indexOf(data.name)==-1){
+      userList.push(data.name)
+    }
+    userList.forEach(element => {
+      console.log(element+'在线')
+    });
+     io.sockets.emit("system", `欢迎${data.name}加入聊天室`);
+    
+    
   });
   client.on('Csend', function (data) {
     console.log(data)
-    io.sockets.emit("Ssend", { name: data.name, msg: data.msg });
+    console.log(userList)
+    io.sockets.emit("Ssend", { name: data.name, msg: data.msg,friLisht:userList });
   })
-  io.on('disconnect', function () {
+  // client.on('onlinelist', function (data) {
+  //   console.log(data)
+    
+  //   io.sockets.emit("Ssend", { name: data.name, msg: data.msg });
+  // })
+  // setInterval(()=>{
+  //   io.sockets.emit("isonline");
+  // },5000)
+  client.on('disconnect', function (data) {
+    // console.log(this)
     console.log(`已离线`);
   });
 });

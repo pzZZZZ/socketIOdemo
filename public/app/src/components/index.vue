@@ -1,10 +1,10 @@
 <template>
   <div class="index">
       <div class="left">
-        <v-left></v-left>
+        <v-left :list="friList"></v-left>
       </div>
       <div class="right">
-        <v-chat></v-chat>
+        <v-chat ></v-chat>
       </div>
      <Modal
         v-model="modal1"
@@ -22,15 +22,21 @@
 import vLeft from "../components/list";
 import vChat from "../components/chat";
 import Vue from "vue";
-import { Modal,Input } from "iview";
+import { Modal, Input } from "iview";
 Vue.component("Modal", Modal);
 Vue.component("iInput", Input);
 export default {
   name: "HelloWorld",
   created() {},
+  mounted() {
+    if (localStorage.getItem("name")) {
+      this.modal1 = false;
+    }
+  },
   methods: {
     ok() {
       console.log(this.value);
+      localStorage.setItem("name", this.value);
     },
     cancel() {
       console.log("cancle");
@@ -44,7 +50,8 @@ export default {
     return {
       msg: "Welcome to Your Vue.js App",
       modal1: true,
-      value: ""
+      value: "",
+      friList:[]
     };
   }
 };

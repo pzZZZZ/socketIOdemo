@@ -1,11 +1,14 @@
 <template>
-  <div class="chat">
+  <div class="chat" @keyup.enter="Csend">
     <div class="chat-header">聊天窗口</div>
     <div class="chat-list">
-      <div class="list wrapper">
+      <div class="list wrapper" >
         <ul>
           <li v-for="(item,i) in chat">
-            <div class="system" v-html="item">
+            <div class="system" v-html="item.msg" v-if="item.type==1">
+              
+            </div>
+            <div class="user" v-html="item.msg" v-if="item.type==2">
               
             </div>
 
@@ -18,7 +21,7 @@
     </quill-editor>
     <div class="btns">
       
-       <Button @click="Csend">发送</Button>
+       <Button @click="Csend" >发送</Button>
     </div>
   </div>
 </template>
@@ -43,21 +46,32 @@ export default {
     };
   },
   mounted() {
+    this.name = localStorage.getItem("name");
     const wrapper = document.querySelector(".wrapper");
-     this.scroll = new Bscroll(wrapper, {
+    this.scroll = new Bscroll(wrapper, {
       scrollbar: true
     });
+
+    this.scroll.on("refresh", () => {
+      this.scroll.scrollTo(0, this.scroll.maxScrollY, "swing");
+    });
+    // this.scroll.on("scroll", () => {
+    //   console.log(123);
+    // });
+
     this.socketarea();
+    this.Cacc();
+    this.isonline();
   },
   sockets: {
-    connect: function() {
-      this.id = this.$socket.id;
-    },
-    customEmit: function(val) {
-      console.log(
-        'this method was fired by the socket server. eg: io.emit("customEmit", data)'
-      );
-    }
+    // connect: function() {
+    //   this.id = this.$socket.id;
+    // },
+    // customEmit: function(val) {
+    //   console.log(
+    //     'this method was fired by the socket server. eg: io.emit("customEmit", data)'
+    //   );
+    // }
   },
   computed: {
     editor() {
@@ -79,28 +93,59 @@ export default {
       this.content = html;
     },
     socketarea() {
-      this.$socket.emit("event", { name: "pzzz" });
-
+      this.$socket.emit("event", { name: this.name });
       this.$options.sockets.system = data => {
         console.log(data);
-        this.chat.push(`系统说：${data}`)
-        this.scroll.refresh()
-        
+        // this.chat.push(`系统说：${data}`);
+        this.chat.push({
+          type: 1,
+          msg: `系统说：${data}`
+        });
+        this.scroll.refresh();
       };
     },
-    Csend(){
-      this.$socket.emit("Csend", {name:'pzzz',msg:this.content});
-       this.$options.sockets.Ssend = data => {
+    isonline() {
+      // this.$options.sockets.isonline = data => {
+      //   this.$socket.emit("onlinelist", { name: this.name });
+      // };
+    },
+    Csend() {
+      this.$socket.emit("Csend", { name: this.name, msg: this.content });
+      this.content = "";
+    },
+    Cacc() {
+      this.$options.sockets.Ssend = data => {
         console.log(data);
-        this.chat.push(`${data.name}：${data.msg}`)
-        this.scroll.refresh()
-        
+        this.$parent.friList = data.friLisht;
+        let str = `${data.name}：${data.msg}`;
+        this.chat.push({
+          type: 2,
+          msg: str
+        });
+
+        setTimeout(() => {
+          this.scroll.refresh();
+          console.log(this.scroll);
+        });
       };
     }
   }
 };
 </script>
 <style lang="scss">
+.user {
+  font-size: 14px;
+  color: #000;
+  text-indent: 2em;
+  padding: 10px 0;
+  display: flex;
+  p {
+    text-indent: 0;
+    img {
+      width: 200px;
+    }
+  }
+}
 .btns {
   display: flex;
   justify-content: flex-end;
@@ -148,5 +193,10 @@ export default {
       }
     }
   }
+}
+.system {
+  color: red;
+  font-size: 18px;
+  display: flex;
 }
 </style>
